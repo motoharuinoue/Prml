@@ -39,11 +39,13 @@ ans_y = 0
 for y in range(0,search_height-template_height,5):
     print(y)
     for x in range(0,search_width-template_width,5):
-        sum = 0.0
         # SSDの計算
 
         '''
         # numpyを利用しない場合
+        
+        sum = 0.0
+
         for i in range(3):
             for yy in range(template_height):
                 for xx in range(template_width):
