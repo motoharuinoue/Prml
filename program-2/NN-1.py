@@ -6,6 +6,7 @@ import sys
 import os
 import numpy as np
 from PIL import Image
+from collections import Counter
 
 # プロトタイプを格納する配列
 train_num = 100
@@ -19,6 +20,13 @@ for i in range(10):
 
 # 混合行列
 result = np.zeros((10,10), dtype=np.int32)
+
+
+#候補の数(K)を入力
+print("Please input K:")
+K = int(input())
+
+#0-9まで検索
 for i in range(10):
     for j in range(1,101):
         # 未知パターンの読み込み
@@ -27,6 +35,10 @@ for i in range(10):
 
         min_val = float('inf')
         ans = 0
+
+        #候補をストックしておく配列
+        cnd = []
+
         # 最近傍法
         for k in range(10):
             for l in range(1,train_num+1):
@@ -36,9 +48,21 @@ for i in range(10):
                 dist = np.dot( (t-p).T , (t-p) )
 
                 # 最小値の探索
-                if dist < min_val:
-                    min_val = dist
-                    ans = k
+                #候補リストの中身がK個より少ない時は自動的に追加
+                if len(cnd) < K:
+                    cnd.append((dist, k))
+                else:
+                    # 類似度が候補リストに格納されているものよりも小さい時、候補リストの中で最大のものを削除
+                    min_val = np.min([v[0] for v in cnd])
+
+                    if dist < min_val:
+                        rm_ind = np.argmax([v[0] for v in cnd])
+                        cnd.pop(int(rm_ind))
+                        cnd.append((dist, k))
+
+        # 候補の中で最も数の多いクラスをansに決定
+        print(cnd)
+        ans = Counter([v[1] for v in cnd]).most_common(1)[0][0]
 
         # 結果の出力
         result[i][ans] +=1
