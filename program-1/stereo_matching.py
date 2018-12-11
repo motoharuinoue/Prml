@@ -51,43 +51,31 @@ for y in range(0,left_height,1):
         # 左画像の座標(x,y）を中心としたテンプレートに類似した領域を
         # 右画像から検索し，その座標（ans_x,ans_y）を求めなさい
 
-        # if x - template_size >= 0 and x + template_size+1 <= left_width and y - template_size >= 0 and y + template_size + 1 <= left_height:
+
+        #左画像からテンプレートを切り抜き
         template = left[y - template_size: y + template_size + 1, x - template_size: x + template_size + 1]
-        # print(template.shape)
 
-        for gx in range(-search_size, search_size, 1):
-            s = right[y - template_size: y + template_size + 1, x + gx - template_size: x + gx + template_size + 1]
+        #x, y座標どちらも移動させて探索
+        for gy in range(-search_size, search_size, 1):
+            for gx in range(-search_size, search_size, 1):
 
-            s = s.flatten()
-            t = template.flatten()
-            if s.shape != t.shape:
-                continue
+                #右画像から抽出
+                s = right[y + gy - template_size: y + gy + template_size + 1, x + gx - template_size: x + gx + template_size + 1]
 
-            ssd = np.dot((t - s).T, (t - s))
-
-            if min_val > ssd:
-                min_val = ssd
-                ans_x = x + gx
-                ans_y = y
+                s = s.flatten()
+                t = template.flatten()
+                if s.shape != t.shape:
+                    continue
 
 
-            '''
-            for gy in range(search_size, right_height - search_size, 1):
-                for gx in range(search_size, right_width - search_size, 1):
-                    print("right ({}, {})".format(gx, gy))
+                ssd = np.dot((t - s).T, (t - s))
 
-                    s = right[gy - search_size: gy + search_size, gx - search_size: gx + search_size]
-                    # print(s.shape)
-                    s = s.flatten()
-                    t = template.flatten()
+                #ssdが最小になるときに座標を更新
+                if min_val > ssd:
+                    min_val = ssd
+                    ans_x = x + gx
+                    ans_y = y + gy
 
-                    ssd = np.dot((t - s).T, (t - s))
-
-                    if min_val > ssd:
-                        min_val = ssd
-                        ans_x = gx
-                        ans_y = gy
-            '''
 
         result[y,x]=(x-ans_x)*(x-ans_x)+(y-ans_y)*(y-ans_y)
 
@@ -96,7 +84,7 @@ max = np.max( result )
 result = (result-min)/(max-min) * 255
 
 result_img = Image.fromarray(np.uint8(result))
-result_img.save('result_no_y_search.jpg')
+result_img.save('result_y_search.jpg')
             
         
                     
