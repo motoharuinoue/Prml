@@ -7,6 +7,7 @@ import os
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+import scipy.stats as st
 
 # 正規分布の個数
 K = 4
@@ -91,7 +92,60 @@ print( "重み -> " , e_lamda )
 #（e_average），分散共分散行列（e_cov），重み（e_lamda）
 # を推定しなさい
 
+LOOP = 10 #ループの回数
 
+# EMアルゴリズム
+for loop in range(LOOP):
+
+    # E-step
+    for i in range(N):
+        temp = np.zeros(K,dtype=np.float64)
+        sum_t = 0
+        for k in range(K):
+
+            # Nを求める
+            temp[k] = mnd(data[i], e_average[k], e_cov[k])
+
+            sum_t += ( temp[k] * e_lamda[k] )
+
+        for k in range(K):
+            Q[i][k] = ( temp[k] * e_lamda[k] ) / sum_t
+
+    # M-step
+    # 重みの更新
+    for k in range(K):
+            sum_Q = 0
+            for i in range(N):
+                sum_Q += Q[i][k]
+            e_lamda[k] = sum_Q / N
+    print( loop , ":lamda -> " , e_lamda )
+
+    # 平均値の更新
+    new_average = np.zeros((K, D),dtype=np.float32)
+    for k in range(K):
+        sum_q = 0
+        sum_q1 = 0
+        for i in range(N):
+            sum_q += Q[i][k] * data[i]
+            sum_q1 += Q[i][k]
+        new_average[k] = sum_q / sum_q1
+    print( loop , ":average -> " , new_average )
+
+    # 標準偏差(分散共分散行列)の更新
+    new_cov = np.zeros((K, D, D),dtype=np.float32)
+    for k in range(K):
+        sum_q = 0
+        sum_q1 = 0
+        for i in range(N):
+            sum_q += Q[i][k] * np.dot((data[i] - e_average[k]).T, (data[i]-e_average[k]))
+            sum_q1 += Q[i][k]
+        new_cov[k] =  sum_q * 1.0 / sum_q1
+    print( loop , ":cov -> " , new_cov )
+    print( " ----- " )
+
+    # 平均値，標準偏差を更新
+    e_average = new_average.copy()
+    e_cov = new_cov.copy()
 
 
 
