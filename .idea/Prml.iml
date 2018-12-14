@@ -5,7 +5,7 @@
       <excludeFolder url="file://$MODULE_DIR$/program-2/mnist" />
       <excludeFolder url="file://$MODULE_DIR$/program-5/face" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.6.2 (~/.pyenv/versions/anaconda3-5.0.0/bin/python)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">

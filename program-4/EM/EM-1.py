@@ -120,7 +120,7 @@ for loop in range(LOOP):
             e_lamda[k] = sum_Q / N
     print( loop , ":lamda -> " , e_lamda )
 
-    # 平均値の更新
+    # 平均値の更新ß
     new_average = np.zeros((K, D),dtype=np.float32)
     for k in range(K):
         sum_q = 0
@@ -137,7 +137,8 @@ for loop in range(LOOP):
         sum_q = 0
         sum_q1 = 0
         for i in range(N):
-            sum_q += Q[i][k] * np.dot((data[i] - e_average[k]).T, (data[i]-e_average[k]))
+            print("data[i]={}, average={}".format(data[i], e_average[k]))
+            sum_q += Q[i][k] * np.dot((data[i] - e_average[k]), (data[i]-e_average[k]))
             sum_q1 += Q[i][k]
         new_cov[k] =  sum_q * 1.0 / sum_q1
     print( loop , ":cov -> " , new_cov )
